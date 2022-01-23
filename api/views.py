@@ -71,28 +71,29 @@ class Scrape(APIView):
         textarea = request.data['link']
         reviews = get_revs(textarea)
 
-        for i in range(len(reviews)):
-            sentiment = getSentiment(reviews[i])
-            if sentiment == "Positive":
-                data["Positive"]["data"].append(reviews[i])
-                data["tally"][2] = data["tally"][2]+1
-            if sentiment == "Neutral":
-                data["Neutral"]["data"].append(reviews[i])
-                data["tally"][1] = data["tally"][1]+1
-            if sentiment == "Negative":
-                data["Negative"]["data"].append(reviews[i])
-                data["tally"][0] = data["tally"][0]+1
+        if len(reviews) != 0:
+            for i in range(len(reviews)):
+                sentiment = getSentiment(reviews[i])
+                if sentiment == "Positive":
+                    data["Positive"]["data"].append(reviews[i])
+                    data["tally"][2] = data["tally"][2]+1
+                if sentiment == "Neutral":
+                    data["Neutral"]["data"].append(reviews[i])
+                    data["tally"][1] = data["tally"][1]+1
+                if sentiment == "Negative":
+                    data["Negative"]["data"].append(reviews[i])
+                    data["tally"][0] = data["tally"][0]+1
 
-        sum = data["tally"][0] + data["tally"][1] + data["tally"][2]
-        negative = data["tally"][0]/sum*100
-        neutral = data["tally"][1]/sum*100
-        positive = data["tally"][2]/sum*100
+            sum = data["tally"][0] + data["tally"][1] + data["tally"][2]
+            negative = data["tally"][0]/sum*100
+            neutral = data["tally"][1]/sum*100
+            positive = data["tally"][2]/sum*100
 
-        data["tally"] = [negative, neutral, positive]
+            data["tally"] = [negative, neutral, positive]
 
-        data["Positive"]["keywords"] = get_hotwords(" ".join(data["Positive"]["data"]))
-        data["Neutral"]["keywords"] = get_hotwords(" ".join(data["Neutral"]["data"]))
-        data["Negative"]["keywords"] = get_hotwords(" ".join(data["Negative"]["data"]))
+            data["Positive"]["keywords"] = get_hotwords(" ".join(data["Positive"]["data"]))
+            data["Neutral"]["keywords"] = get_hotwords(" ".join(data["Neutral"]["data"]))
+            data["Negative"]["keywords"] = get_hotwords(" ".join(data["Negative"]["data"]))
 
         response = Response()
         response.data = data

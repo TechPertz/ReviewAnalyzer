@@ -34,17 +34,21 @@ def get_revs(url):
     reviews = []
     revs_href = get_revs_link(url)
     print(revs_href)
-    link = revs_href['href']
-    print(link)
-    root_link = "https://www.amazon.in"+link
-    print(root_link)
-    for k in range(10):
-        final_link = root_link+'&pageNumber='+str(k+1)
-        print(final_link)
-        soup=html_code(final_link)
-        all_revs = soup.findAll("span",{'data-hook':"review-body"})
-        if len(all_revs) == 0:
-            break
-        for i in all_revs:
-            reviews.append(i.text)
+    try: 
+        link = revs_href['href']
+    except:
+        link = None
+    if link is not None:
+        print(link)
+        root_link = "https://www.amazon.in"+link
+        print(root_link)
+        for k in range(10):
+            final_link = root_link+'&pageNumber='+str(k+1)
+            print(final_link)
+            soup=html_code(final_link)
+            all_revs = soup.findAll("span",{'data-hook':"review-body"})
+            if len(all_revs) == 0:
+                break
+            for i in all_revs:
+                reviews.append(i.text)
     return reviews
