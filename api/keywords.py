@@ -22,3 +22,8 @@ def get_hotwords(text):
     print(Counter(result).most_common(10))
     return Counter(result).most_common(10)
 
+# data = get_hotwords("Poor quality is what you get for looking bargain, it is total waste, as don't feel like to use it.")
+# for i in data:
+#     print(type(i))
+
+

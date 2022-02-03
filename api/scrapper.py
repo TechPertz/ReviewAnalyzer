@@ -25,13 +25,17 @@ def html_code(url):
 	return (soup)
 
 def get_revs_link(url):
-    soup = html_code(url)
-    all_revs_link = soup.find("a",{'data-hook':"see-all-reviews-link-foot"})
-    print(all_revs_link)
+    all_revs_link = []
+    while len(all_revs_link) == 0:
+        soup = html_code(url)
+        all_revs_link = soup.find("a",{'data-hook':"see-all-reviews-link-foot"})
+        print(all_revs_link)
     return all_revs_link
 
-def get_revs(url):
+def get_revs(url, stars):
     reviews = []
+    new_ratings = []
+    names_text = []
     revs_href = get_revs_link(url)
     print(revs_href)
     try: 
@@ -43,12 +47,30 @@ def get_revs(url):
         root_link = "https://www.amazon.in"+link
         print(root_link)
         for k in range(10):
-            final_link = root_link+'&pageNumber='+str(k+1)
+            final_link = root_link+'&pageNumber='+str(k+1)+'&filterByStar='+stars
             print(final_link)
             soup=html_code(final_link)
+
             all_revs = soup.findAll("span",{'data-hook':"review-body"})
             if len(all_revs) == 0:
                 break
             for i in all_revs:
                 reviews.append(i.text)
-    return reviews
+            
+            ratings = soup.findAll("i",{'data-hook':"review-star-rating"})
+            for i in ratings:
+                new_ratings.append(int(i.text.split()[0].split(".")[0]))
+            
+            names = soup.findAll("span",{'class':"a-profile-name"})
+            for i in names:
+                names_text.append(i.text)
+
+            
+
+    return [names_text, new_ratings, reviews]
+
+            # names = soup.findAll("span",{'class':"a-profile-content"})
+            # names_text = [name.text.strip() for name in names]
+            # ratings = soup.findAll("i",{'data-hook':"review-star-rating"})
+            # ratings_text = [rating.text.strip() for rating in ratings]
+            
